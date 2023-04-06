@@ -1,0 +1,213 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Users {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+
+    <!-- Header -->
+    <div class="header bg-primary pb-6">
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+            <div class="col-lg-6 col-7">
+              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                   <li class="breadcrumb-item"><a href="/groups">Groups</a></li>
+                      {% if type == "Groups" %}
+                        <li class="breadcrumb-item active" aria-current="page">Custom groups</li>
+                      {% else %}
+                        <li class="breadcrumb-item active" aria-current="page">iBaMaFlex! groups</li>
+                      {% endif %}
+
+                </ol>
+              </nav>
+            </div>
+            <!--
+            <div class="col-lg-6 col-5 text-right">
+              <a class="btn btn-sm btn-neutral" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Teachers</a>
+              <button class="btn btn-sm btn-neutral" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Students</button>
+              <button class="btn btn-sm btn-neutral" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Classes</button>
+              <button class="btn btn-sm btn-neutral" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Groups</button>
+            </div>
+            -->
+
+            <div class="col-lg-6 col-5 text-right">
+
+              {% if type != "Groups" %}
+                <a href="/groups" class="btn btn-sm btn-danger">iBaMaFlex! groups</a>
+                <a href="/groups/Groups" class="btn btn-sm btn-neutral">Custom groups</a>
+              {% else %}
+                <a href="/groups" class="btn btn-sm btn-neutral">iBaMaFlex! groups</a>
+                <a href="/groups/Groups" class="btn btn-sm btn-danger">Custom groups</a>
+              {% endif %}
+
+            </div>
+          </div>
+          <!-- Card stats -->
+        </div>
+      </div>
+    </div>
+
+      <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col-xl-12">
+          <div class="card">
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h3 class="mb-0">Groups</h3>
+                </div>
+                <div class="col text-right">
+                  {% if type == "Groups" %}
+                    <button type="button" class="btn btn-sm btn-neutral" data-toggle="modal" data-target="#addGroup">
+                      Create custom group
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <!-- groups table -->
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="name">Groupname</th>
+                    <th scope="col" class="sort" data-sort="budget">Number of members</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for group in data %}
+                    <tr>
+
+                      <td>{{ group['groupname'] }}</td>
+                      <td>{{ group['number'] }}</td>
+                      <td><form action="/group-detail/{{group['id']}}">
+                        <button type="submit">See details</button>
+                      </form></td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% include "includes/footer.html" %}
+
+    </div>
+    <!-- Page content for students -->
+      <div id="students" class="container-fluid mt--6 collapse">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Light table -->
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="sort" data-sort="name">Student ID</th>
+                  <th scope="col" class="sort" data-sort="budget">Lastname</th>
+                  <th scope="col" class="sort" data-sort="status">Firstname</th>
+                  <th scope="col" class="sort" data-sort="status">Class</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody class="list">
+               {% for student in students %}
+                <tr>
+                      <td>{{ student['id'] }}</td>
+                      <td>{{ student['lastname'] }}</td>
+                      <td>{{ student['firstname'] }}</td>
+                      <td>{{ student['classname'] }}</td>
+                       <td class="text-right">
+                        <div class="dropdown">
+                          <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </a>
+                          <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                          </div>
+                        </div>
+                      </td>
+                </tr>
+               {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          <!-- Card footer -->
+          <div class="card-footer py-4">
+            <nav aria-label="...">
+              <ul class="pagination justify-content-end mb-0">
+                <li class="page-item disabled">
+                  <a class="page-link" href="#" tabindex="-1">
+                    <i class="fas fa-angle-left"></i>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+                <li class="page-item active">
+                  <a class="page-link" href="#">1</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="#">
+                    <i class="fas fa-angle-right"></i>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+  <-- Modal to add the group -->
+  </div>
+    <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addGroupLabel">Create custom group</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form role="form" method="post" enctype="multipart/form-data">
+              <div class="form-group">
+                <div class="input-group input-group-merge input-group-alternative mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="ni ni-building"></i></span>
+                  </div>
+                  <input name="name" class="form-control" placeholder="Name of group" type="text">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add group</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+{% endblock content %}
+
