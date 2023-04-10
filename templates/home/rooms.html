@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+{% extends 'layouts/base.html' %}
 
-</head>
-<body>
+{% block title %} Rooms {% endblock title %}
 
-  <div class="main-content" id="panel">
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
 
     <!-- Header -->
     <div class="header bg-primary pb-6">
@@ -157,9 +154,11 @@
         </div>
       </div>
     </div>
- </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/static/assets/js/argon.js?v=1.2.0"></script>
-</body>
-</html>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+
+{% endblock javascripts %}
