@@ -8,7 +8,6 @@ from authentication.forms import LoginForm, CreateAccountForm
 import os
 
 
-
 app = Flask(__name__)
 app.secret_key = config("APP_SECRET_KEY")
 
@@ -23,9 +22,12 @@ def hello(name=None):
 
 @app.route('/rooms')
 def rooms():
-    # return render_template('login.html')
-    rooms = getRooms()
-    return render_template('home/rooms.html', segment='rooms', rooms=rooms)
+    if 'user' in session:
+        # return render_template('login.html')
+        rooms = getRooms()
+        return render_template('home/rooms.html', segment='rooms', rooms=rooms)
+    else:
+        return login()
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -38,14 +40,13 @@ def login():
             auth.sign_in_with_email_and_password(email, password)
             session['user'] = email
             print(session)
-            return hello("Ona")
+            return rooms()
 
         # Something (user or pass) is not ok
         except:
             return render_template('accounts/login.html',
                                     msg='Wrong email or password',
                                     form=login_form)
-
     if 'user' in session:
         return rooms()
 
