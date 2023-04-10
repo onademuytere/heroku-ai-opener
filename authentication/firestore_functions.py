@@ -1,11 +1,6 @@
-from firebase_admin import credentials, firestore, initialize_app, storage
-from authentication.firestore_authentication import default_app, db, bucket
+from firebase_admin import firestore
+from authentication.firestore_authentication import db
 from datetime import datetime, timedelta
-from decouple import config
-import tempfile
-import json
-import os
-
 
 days_of_week = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 

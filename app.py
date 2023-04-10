@@ -1,4 +1,4 @@
-from flask import Flask, session, render_template, request, redirect, jsonify
+from flask import Flask, render_template
 from authentication.firestore_functions import *
 
 app = Flask(__name__)
