@@ -20,12 +20,17 @@ def home():
 def hello(name=None):
     return render_template('home/hello.html', name=name)
 
-@app.route('/rooms')
+
+@app.route('/rooms', methods=['GET', 'POST'])
 def rooms():
     if 'user' in session:
-        # return render_template('login.html')
-        rooms = getRooms()
-        return render_template('home/rooms.html', segment='rooms', rooms=rooms)
+        if request.method == 'POST':
+            addRoom(request.form['name'], request.form['location'])
+        try:
+            rooms = getRooms()
+            return render_template('home/rooms.html', segment='rooms', rooms=rooms)
+        except:
+            return render_template('home/rooms.html', segment='rooms', rooms="hey")
     else:
         return login()
 
