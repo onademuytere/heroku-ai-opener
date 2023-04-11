@@ -67,31 +67,30 @@ def room(room_id):
         return login()
 
 
-"""
 @app.route('/room-detail/<room_id>/<room_action>', methods=['GET', 'POST'])
-@login_required
 def room_delete(room_id, room_action):
-    if room_action == "delete-room":
-        deleteRoom(room_id)
-    elif room_action == "unlock-door":
-        unlockRoom(room_id)
-        return room(room_id)
-    return index()
+    if 'user' in session:
+        if room_action == "delete-room":
+            deleteRoom(room_id)
+        elif room_action == "unlock-door":
+            unlockRoom(room_id)
+            return room(room_id)
+        return rooms()
+    else:
+        return login()
 
 
 @app.route('/room-detail/<scheme_id>/delete-scheme', methods=['GET', 'POST'])
-@login_required
 def scheme_delete(scheme_id):
-    deleteScheme(scheme_id)
-
-    if getRooms():
-        print("deleted")
-        return index()
+    if 'user' in session:
+        try:
+            deleteScheme(scheme_id)
+            return rooms()
+        except:
+            return rooms()
     else:
-        return render_template('home/rooms.html', segment='rooms', rooms=[])
+        return login()
 
-
-"""
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
