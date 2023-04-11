@@ -13,12 +13,7 @@ app.secret_key = config("APP_SECRET_KEY")
 
 @app.route('/')
 def home():
-    return "Flask heroku atespp"
-
-
-@app.route('/hello/<name>')
-def hello(name=None):
-    return render_template('home/hello.html', name=name)
+    return rooms()
 
 
 @app.route('/rooms', methods=['GET', 'POST'])
@@ -271,6 +266,87 @@ def group_delete_user(group_id, user_id):
     return login()
 
 
+@app.route('/history-room/<room_id>', methods=['GET', 'POST'])
+def history_room(room_id):
+    if 'user' in session:
+        data = None
+        if room_id:
+            data = getHistoryRoom(room_id)
+            _, dict, _ = getRoomById(room_id)
+        if data is not None:
+            return render_template('home/history-room.html', segment='history-room', logs=data, dict=dict)
+    else:
+        return login()
+
+@app.route('/history-room/<room_id>/see-all', methods=['GET', 'POST'])
+def history_room_all(room_id):
+    if 'user' in session:
+        data = None
+        if room_id:
+            data = getHistoryRoom(room_id, first=None, all=True)
+            _, dict, _ = getRoomById(room_id)
+        if data is not None:
+            return render_template('home/history-room.html', segment='history-room', logs=data, dict=dict)
+    else:
+        return login()
+
+
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    if 'user' in session:
+        if request.method == 'POST':
+            editParameters(request.form)
+        acc, sec = getParameters()
+        return render_template('home/settings.html', segment='settings', acc=acc, sec=sec)
+    else:
+        return login()
+
+
+@app.route('/<template>')
+def route_template(template):
+    if 'user' in session:
+        try:
+            if not template.endswith('.html'):
+                template += '.html'
+
+            # Detect the current page
+            segment = get_segment(request)
+
+            # Serve the file (if exists) from app/templates/home/FILE.html
+            """if template == "rooms.html":
+                doc = general_parameters.document("parameters").get()
+                if doc.exists:
+                    params = doc.to_dict()
+                    return render_template("home/" + template, segment=segment, accuracy="success")
+                else:
+                    return render_template("home/" + template, segment=segment, accuracy="fail")
+            else:
+                return render_template("home/" + template, segment=segment, accuracy="not rooms")"""
+            return render_template("home/" + template, segment=segment)
+
+        except TemplateNotFound:
+            return render_template('home/page-404.html'), 404
+
+        except:
+            return render_template('home/page-500.html'), 500
+    else:
+        return login()
+
+
+# Helper - Extract current page name from request
+def get_segment(request):
+    try:
+
+        segment = request.path.split('/')[-1]
+
+        if segment == '':
+            segment = 'index'
+
+        return segment
+
+    except:
+        return None
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -293,10 +369,6 @@ def login():
         return rooms()
 
     return render_template('accounts/login.html', form=login_form)
-
-
-
-
 
 
 if __name__ == "__main__":
