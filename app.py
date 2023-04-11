@@ -35,6 +35,64 @@ def rooms():
         return login()
 
 
+@app.route('/room-detail/<room_id>', methods=['GET', 'POST'])
+def room(room_id):
+    if 'user' in session:
+        if request.method == 'POST':
+            if 'name' in request.form or 'location' in request.form:
+                editRoom(request.form, room_id)
+            else:
+                group_id = request.form.get('selectGroup')
+                schedule_week = {}
+                for day in days_of_week:
+                    print(day)
+                    list = []
+                    if request.form[f'input11{day}'] != '' and request.form[f'input12{day}'] != '':
+                        listElement = request.form[f'input11{day}'] + " - " + request.form[f'input12{day}']
+                        list.append(listElement)
+                    if request.form[f'input21{day}'] != '' and request.form[f'input22{day}'] != '':
+                        listElement = request.form[f'input21{day}'] + " - " + request.form[f'input22{day}']
+                        list.append(listElement)
+                    schedule_week[day] = list
+                addScheme(schedule_week, group_id, room_id)
+
+        if getRoomById(room_id) and getAllGroups():
+            schemes, dict, lastUnlocked = getRoomById(room_id)
+            groups = getAllGroups()
+            currently_allowed = getCurrentlyAllowed(schemes)
+            return render_template('home/room-detail.html', segment='room-detail', room=dict, schemes=schemes,
+                                   days_of_week=days_of_week, groups=groups, lastUnlocked=lastUnlocked,
+                                   currently_allowed=currently_allowed)
+    else:
+        return login()
+
+
+"""
+@app.route('/room-detail/<room_id>/<room_action>', methods=['GET', 'POST'])
+@login_required
+def room_delete(room_id, room_action):
+    if room_action == "delete-room":
+        deleteRoom(room_id)
+    elif room_action == "unlock-door":
+        unlockRoom(room_id)
+        return room(room_id)
+    return index()
+
+
+@app.route('/room-detail/<scheme_id>/delete-scheme', methods=['GET', 'POST'])
+@login_required
+def scheme_delete(scheme_id):
+    deleteScheme(scheme_id)
+
+    if getRooms():
+        print("deleted")
+        return index()
+    else:
+        return render_template('home/rooms.html', segment='rooms', rooms=[])
+
+
+"""
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm(request.form)
