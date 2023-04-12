@@ -13,7 +13,7 @@ app.secret_key = config("APP_SECRET_KEY")
 
 @app.route('/')
 def home():
-    return rooms()
+    return redirect(url_for('rooms'))
 
 
 @app.route('/rooms', methods=['GET', 'POST'])
@@ -27,7 +27,7 @@ def rooms():
         except:
             return render_template('home/rooms.html', segment='rooms', rooms="hey")
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 @app.route('/room-detail/<room_id>', methods=['GET', 'POST'])
@@ -59,7 +59,7 @@ def room(room_id):
                                    days_of_week=days_of_week, groups=groups, lastUnlocked=lastUnlocked,
                                    currently_allowed=currently_allowed)
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 @app.route('/room-detail/<room_id>/<room_action>', methods=['GET', 'POST'])
@@ -72,7 +72,8 @@ def room_delete(room_id, room_action):
             return room(room_id)
         return rooms()
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/room-detail/<scheme_id>/delete-scheme', methods=['GET', 'POST'])
@@ -84,7 +85,8 @@ def scheme_delete(scheme_id):
         except:
             return rooms()
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/users/<type>', methods=['GET', 'POST'])
@@ -114,7 +116,8 @@ def user_types(type):
 
             return render_template('home/users.html', segment='users', type=type, data=data, groups=groups)
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/users/<type>/see-all', methods=['GET', 'POST'])
@@ -135,7 +138,8 @@ def user_pagination(type):
 
             return render_template('home/users.html', segment='users', type=type, data=data, groups=groups)
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/users/<type>/<filter_by>/<sort>', methods=['GET', 'POST'])
@@ -156,7 +160,8 @@ def user_filtering(type, filter_by, sort):
 
             return render_template('home/users.html', segment='users', type=type, data=data, groups=groups, sort=sort, filter_by=filter_by)
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/users/<type>/<filter_by>/<sort>/see-all', methods=['GET', 'POST'])
@@ -178,7 +183,8 @@ def user_filtering_all(type, filter_by, sort):
 
             return render_template('home/users.html', segment='users', type=type, data=data, groups=groups)
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/users/<user_id>/add-to-group', methods=['GET', 'POST'])
@@ -193,7 +199,8 @@ def user_to_group(user_id):
             print("no")
             return user_types("All")
     else:
-        return login()
+        return redirect(url_for('login'))
+
     #return render_template('home/users.html', segment='users', type=type, data=data, groups=groups)
 
 
@@ -204,7 +211,8 @@ def groups():
         if data:
             return render_template('home/groups.html', segment='groups', type=type, data=data)
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/groups/<type>', methods=['GET', 'POST'])
@@ -219,7 +227,8 @@ def group_types(type):
         if data is not None:
             return render_template('home/groups.html', segment='groups', type=type, data=data)
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/group-detail/<group_id>', methods=['GET', 'POST'])
@@ -246,7 +255,8 @@ def group(group_id):
                                groupmembers=groupmembers, days_of_week=days_of_week, rooms=rooms)
 
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/group-detail/<group_id>/delete-group', methods=['GET', 'POST'])
@@ -255,7 +265,8 @@ def group_delete(group_id):
         deleteGroup(group_id)
         return group_types("Groups")
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/group-detail/<group_id>/delete-user/<user_id>', methods=['GET', 'POST'])
@@ -263,7 +274,9 @@ def group_delete_user(group_id, user_id):
     if 'user' in session:
         deleteUserFromGroup(group_id, user_id)
         return group(group_id)
-    return login()
+    else:
+        return redirect(url_for('login'))
+
 
 
 @app.route('/history-room/<room_id>', methods=['GET', 'POST'])
@@ -276,7 +289,8 @@ def history_room(room_id):
         if data is not None:
             return render_template('home/history-room.html', segment='history-room', logs=data, dict=dict)
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 @app.route('/history-room/<room_id>/see-all', methods=['GET', 'POST'])
 def history_room_all(room_id):
@@ -288,7 +302,8 @@ def history_room_all(room_id):
         if data is not None:
             return render_template('home/history-room.html', segment='history-room', logs=data, dict=dict)
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -299,7 +314,8 @@ def settings():
         acc, sec = getParameters()
         return render_template('home/settings.html', segment='settings', acc=acc, sec=sec)
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 @app.route('/<template>')
@@ -330,7 +346,8 @@ def route_template(template):
         except:
             return render_template('home/page-500.html'), 500
     else:
-        return login()
+        return redirect(url_for('login'))
+
 
 
 # Helper - Extract current page name from request
@@ -358,7 +375,7 @@ def login():
             auth.sign_in_with_email_and_password(email, password)
             session['user'] = email
             print(session)
-            return rooms()
+            return redirect(url_for('rooms'))
 
         # Something (user or pass) is not ok
         except:
@@ -366,9 +383,17 @@ def login():
                                     msg='Wrong email or password',
                                     form=login_form)
     if 'user' in session:
-        return rooms()
+        return redirect(url_for('rooms'))
 
     return render_template('accounts/login.html', form=login_form)
+
+
+@app.route('/logout')
+def logout():
+    if 'user' in session:
+        session.pop('user')
+    return redirect(url_for('login'))
+
 
 
 if __name__ == "__main__":

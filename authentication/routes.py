@@ -15,11 +15,13 @@ from authentication import blueprint
 def route_default():
     return redirect(url_for('authentication_blueprint.login'))
 
+
+"""
 @blueprint.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('authentication_blueprint.login'))
-
+"""
 
 # Errors
 
