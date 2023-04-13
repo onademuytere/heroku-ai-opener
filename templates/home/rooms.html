@@ -160,5 +160,13 @@
 
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
+  <script>
+      $(document).on("click", ".open-deleteScheme", function () {
+
+        console.log("test")
+        var mySchemeId = $(this).data('id');
+        $(".modal-footer #schemeId").attr("href", "/room-detail/" + mySchemeId + "/delete-scheme");
+      });
+  </script>
 
 {% endblock javascripts %}
