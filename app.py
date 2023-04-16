@@ -77,9 +77,9 @@ def scheme_delete(scheme_id):
     if 'user' in session:
         try:
             deleteScheme(scheme_id)
-            return rooms()
+            redirect(url_for('rooms'))
         except:
-            return rooms()
+            redirect(url_for('rooms'))
     else:
         return redirect(url_for('login'))
 
