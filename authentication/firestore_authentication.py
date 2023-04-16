@@ -36,3 +36,4 @@ default_app = initialize_app(cred, {
     'storageBucket': 'bachelorproef-2223.appspot.com'})
 db = firestore.client()
 bucket = storage.bucket()
+

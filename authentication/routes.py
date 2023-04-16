@@ -1,14 +1,7 @@
 # -*- encoding: utf-8 -*-
 from flask import render_template, redirect, url_for
-from flask_login import (
-    current_user,
-    login_user,
-    logout_user
-)
-
-from apps import db, login_manager
+from apps import login_manager
 from authentication import blueprint
-#from authentication.firestore_functions import getRooms
 
 
 @blueprint.route('/')

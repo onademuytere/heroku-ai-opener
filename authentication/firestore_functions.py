@@ -1,6 +1,6 @@
-from firebase_admin import firestore
 from authentication.firestore_authentication import db
 from datetime import datetime, timedelta
+from firebase_admin import firestore
 
 days_of_week = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
@@ -140,7 +140,6 @@ def getUsersByGroup(group_id):
 
 
 def addUserToGroup(userid, groupid):
-    print("test user added to group")
     data = {
         u'group_id': firestore.ArrayUnion([groupid])
     }
@@ -158,17 +157,12 @@ def getUsers(filterby=None, sort=None, all=False):
                 docs = db.collection(u'user').order_by(filterby).stream()
             else:
                 docs = db.collection(u'user').order_by(filterby, direction=firestore.Query.DESCENDING).stream()
-
         else:
             if sort == "asc":
                 docs = db.collection(u'user').order_by(filterby).limit(20).stream()
             else:
                 docs = db.collection(u'user').order_by(filterby, direction=firestore.Query.DESCENDING).limit(
                     20).stream()
-
-        # docs_campusid = db.collection(u'user').doc(search).get()
-        # docs = db.collection(u'user').where(search, u'in', [u'firstname', u'lastname'])
-
     elif all:
         docs = db.collection(u'user').order_by(u'lastname').stream()
     else:
@@ -183,7 +177,6 @@ def getUsers(filterby=None, sort=None, all=False):
             dict["classname"] = classname
             users.append(dict)
         return users
-
 
 # All students
 def getStudents(filterby=None, sort=None, all=False):
@@ -226,9 +219,6 @@ def getTeachers(filterby=None, sort=None, all=False):
     teachers = []
     docs = None
     if filterby and sort:
-        print(filterby)
-        print(sort)
-        print(all)
         # search in firstnames, lastnames and id
         if all:
             if sort == "asc":
@@ -271,7 +261,6 @@ def addScheme(schedule_week, group_id, room_id):
 
     for key in schedule_week:
         data[key] = schedule_week[key]
-
     db.collection(u'scheme').add(data)
 
 
@@ -346,16 +335,9 @@ def addGroup(groupname):
 
 # All groups
 def getAllGroups():
-    groups = []
-    docs = None
-    docs = db.collection(u'group').stream()
-    if docs:
-        for doc in docs:
-            dict = doc.to_dict()
-            dict["id"] = doc.id
-            groups.append(dict)
-        return groups
-    else:
+    try:
+        return get_firestore_collection("group", order_by="groupname")
+    except:
         return None
 
 
@@ -413,7 +395,6 @@ def deleteGroup(group_id):
 
 def deleteUserFromGroup(group_id, user_id):
     user_ref = db.collection(u'user').document(user_id)
-
     user_ref.update({u'group_id': firestore.ArrayRemove([group_id])})
 
 
@@ -424,12 +405,7 @@ def getHistoryRoom(room_id, first=None, all=False):
     if first:
         logging_ref = db.collection(u'logging').where(u'room_id', '==', room_id)
         query = logging_ref.order_by(u'datetime', direction=firestore.Query.DESCENDING).limit(1)
-        """query = logging_ref.order_by(
-            u'datetime', direction=firestore.Query.DESCENDING).limit(0)
-        """
         result = query.stream()
-        # print("result:", result)
-        # print("dictionary", result.to_dict())
         if result:
             for r in result:
                 dict_r = r.to_dict()
@@ -441,10 +417,8 @@ def getHistoryRoom(room_id, first=None, all=False):
                     dict_r["name"] = dict_r['user_id']
                 else:
                     dict_r["name"] = user['lastname'] + " " + user['firstname']
-                # print("dictionary", dict_r)
                 logs.append(dict_r)
         return logs
-        # filteren op date descending en enkel deze outputten
 
     else:
         today = datetime.now() - timedelta(days=14)
@@ -494,9 +468,3 @@ def editParameters(req):
 
     params_ref = db.collection(u'general_parameters').document(u'parameters')
     params_ref.update(dict_params)
-
-
-def allowed_file(filename):
-    allowed_ext = {'jpg', 'jpeg', 'png', 'gif'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_ext
-

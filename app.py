@@ -1,12 +1,9 @@
 from authentication.firestore_functions import *
-from flask import Flask, session, render_template, request, redirect, jsonify, url_for
+from flask import Flask, session, render_template, request, redirect, url_for
 from jinja2 import TemplateNotFound
-from authentication.firestore_authentication import pb, auth
+from authentication.firestore_authentication import auth
 from decouple import config
-from authentication import blueprint
-from authentication.forms import LoginForm, CreateAccountForm
-import os
-
+from authentication.forms import LoginForm
 
 app = Flask(__name__)
 app.secret_key = config("APP_SECRET_KEY")
@@ -393,7 +390,6 @@ def logout():
     if 'user' in session:
         session.pop('user')
     return redirect(url_for('login'))
-
 
 
 if __name__ == "__main__":
