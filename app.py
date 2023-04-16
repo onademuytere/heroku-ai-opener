@@ -12,7 +12,6 @@ app.secret_key = config("APP_SECRET_KEY")
 def home():
     return redirect(url_for('rooms'))
 
-
 @app.route('/rooms', methods=['GET', 'POST'])
 def rooms():
     if 'user' in session:
@@ -85,28 +84,28 @@ def scheme_delete(scheme_id):
         return redirect(url_for('login'))
 
 
+def add_user_to_group(request, type):
+    try:
+        groupid = request.form.get('selectGroup')
+        userid = request.form.get('useridentifier')
+        addUserToGroup(userid, groupid)
+        return redirect(url_for('group', group_id=groupid))
+    except:
+        return redirect(url_for('user_types', type=type))
+
 
 @app.route('/users/<type>', methods=['GET', 'POST'])
 def user_types(type):
     if 'user' in session:
         data = None
         if request.method == 'POST':
-            if 'search' in request.form:
-                if type == "All":
-                    print(request.form.get('search'))
-                    getUsers(request.form.get('search'))
-            else:
-                groupid = request.form.get('selectGroup')
-                userid = request.form.get('useridentifier')
-                addUserToGroup(userid, groupid)
-                return group(groupid)
+            return add_user_to_group(request, type)
         if type == "All":
             data = getUsers()
         if type == "Students":
             data = getStudents()
         elif type == "Teachers":
             data = getTeachers()
-
         groups = getNonDefaultGroups()
         if data is not None:
             print(data)
@@ -121,6 +120,8 @@ def user_types(type):
 def user_pagination(type):
     if 'user' in session:
         data = None
+        if request.method == 'POST':
+            return add_user_to_group(request, type)
 
         if type == "All":
             data = getUsers(all=True)
@@ -143,6 +144,8 @@ def user_pagination(type):
 def user_filtering(type, filter_by, sort):
     if 'user' in session:
         data = None
+        if request.method == 'POST':
+            return add_user_to_group(request, type)
 
         if type == "All":
             data = getUsers(filterby=filter_by, sort=sort)
@@ -164,6 +167,8 @@ def user_filtering(type, filter_by, sort):
 @app.route('/users/<type>/<filter_by>/<sort>/see-all', methods=['GET', 'POST'])
 def user_filtering_all(type, filter_by, sort):
     if 'user' in session:
+        if request.method == 'POST':
+            return add_user_to_group(request, type)
 
         data = None
 
@@ -197,8 +202,6 @@ def user_to_group(user_id):
             return user_types("All")
     else:
         return redirect(url_for('login'))
-
-    #return render_template('home/users.html', segment='users', type=type, data=data, groups=groups)
 
 
 @app.route('/groups', methods=['GET', 'POST'])

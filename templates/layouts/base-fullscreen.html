@@ -73,12 +73,10 @@
 
   <!-- Specific JS goes HERE -->
 
-  {% block javascripts %}
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-  <script src="/static/assets/js/argon.js?v=1.2.0"></script>
-  {% endblock javascripts %}
-
   {% include "includes/scripts.html" %}
+
+  {% block javascripts %}{% endblock javascripts %}
+  <script src="/static/assets/js/argon.js?v=1.2.0"></script>
 
 </body>
 

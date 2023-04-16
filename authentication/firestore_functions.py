@@ -48,7 +48,7 @@ def getRoomById(room_id, value=None):
                     dict_scheme = doc.to_dict()
                     dict_scheme["id"] = doc.id
                     schemes.append(dict_scheme)
-            last_unlocked = getHistoryRoom(room_id, True)
+            last_unlocked = getHistoryRoom(room_id, first=True)
             return schemes, dict, last_unlocked
 
 
@@ -403,7 +403,7 @@ def getHistoryRoom(room_id, first=None, all=False):
     logs = []
     docs = None
     if first:
-        logging_ref = db.collection(u'logging').where(u'room_id', '==', room_id)
+        logging_ref = db.collection(u'logging').where(u'room_id', '==', room_id).where(u'colour', '==', u'white')
         query = logging_ref.order_by(u'datetime', direction=firestore.Query.DESCENDING).limit(1)
         result = query.stream()
         if result:
